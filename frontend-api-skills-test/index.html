@@ -1,0 +1,122 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Test 1</title>
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="public/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="card mb-5 mt-5">
+            <div id="divRecipe">
+            </div>
+            <div id="divIngredients">
+            </div>
+            <div id="divSpecials">
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    window.onload = function () {
+        callRecipe();
+        //callSpecials();
+        //callBoth();    
+    }
+
+    function callRecipe() {
+        fetch('http://localhost:3001/recipes')
+            .then(response => {
+                if (!response.ok) {
+                    throw Error('ERROR');
+                }
+                return response.json();
+            })
+            .then(recipes => {
+                const html = recipes
+                    .map(recipes => {
+                        return `
+                        <div class="container mb-4">
+                            <div class="row mt-5 mb-3">
+                                <div class="col-md-6 col-sm-12 mt-4 mb-4">
+                                    <label><img src="public/${recipes.images.medium}" class="img-fluid"/></label>
+                                </div>
+                                <div class="col-md-6 col-sm-12 mt-4 mb-4">
+                                    <h3>${recipes.title}</h3>
+                                    <p class="lead">Desc: ${recipes.description}</p>
+                                    <br />
+                                    <p>Servings: ${recipes.servings}</p>
+                                    <p>Preparation Time: ${recipes.prepTime}</p>
+                                <p>Cook Time: ${recipes.cookTime}<p>
+                            </div>
+                        </div>
+                        <h4>Ingredients</h4>
+						${recipes.ingredients.map((ingredients) => {
+                            return `
+                            <label><strong>${ingredients.name}</strong> ${ingredients.amount} ${ingredients.measurement}, </label>
+                                `;
+                        }).join("")
+                            }
+                            <br />
+                            <br />
+                            <h4>Directions</h4>
+                        	${recipes.directions.map((directions) => {
+                                return `
+                                <p>${directions.instructions}</p>
+                                `;
+                            }).join("")
+                            }   
+                        <hr />
+                        `;
+                    })
+                    .join("");
+
+                document.getElementById("divRecipe").innerHTML = html;
+                document.getElementById("divIngredients").innerHTML = html1;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+
+    function callSpecials() {
+        fetch('http://localhost:3001/specials')
+            .then(response => {
+                if (!response.ok) {
+                    throw Error('ERROR');
+                }
+                return response.json();
+            })
+            .then(specials => {
+                const html2 = specials
+                    .map(specials => {
+                        return `
+                        <p>Desc: ${specials.type}</p>
+                        `;
+                    })
+                    .join("");
+                document.getElementById("divSpecials").innerHTML = html2;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="public/js/vendor/jquery-slim.min.js"><\/script>')</script>
+<script src="public/js/vendor/popper.min.js"></script>
+<script src="public/js/bootstrap.min.js"></script>
+
+
+</html>
